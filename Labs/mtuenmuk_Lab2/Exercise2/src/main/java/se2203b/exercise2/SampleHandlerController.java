@@ -16,9 +16,14 @@ public class SampleHandlerController{
      * 500 and 300 respectively
      */
     public void movingLabel(){
+        //creates a Random obj that will be used generate a random number
         Random randomPos = new Random();
+
+        //using the Random obj to get a random int with a max value of 500 for the new X coordinate
         jumpingLabel.setLayoutX(randomPos.nextInt(500));
-        jumpingLabel.setLayoutX(randomPos.nextInt(300));
+
+        //using the Random obj to get a random int with a max value of 300 for the new Y coordinate
+        jumpingLabel.setLayoutY(randomPos.nextInt(300));
     }
 
 }
