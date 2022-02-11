@@ -12,11 +12,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class HydraController {
 
     private Random rnd = new Random();
+
+    private int score;
+
+    private int[][] positions = new int[16][16];
+
+    private ImageView hydraIcon = new ImageView();
 
     @FXML
     private Button play, rest;
@@ -26,8 +33,6 @@ public class HydraController {
 
     @FXML
     private GridPane gameArea;
-
-    private ImageView hydraIcon = new ImageView();
 
     public void reset() {
         this.gameArea.getChildren().clear();
@@ -41,34 +46,44 @@ public class HydraController {
         setHead(headType);
         this.play.setDisable(true);
         this.headSize.setDisable(true);
-        this.gameArea.add(new Label("HI"), 1,0);
     }
 
     public void setHydraIcon(ImageView head, int headType){
         int x = this.rnd.nextInt(1,16);
         int y = this.rnd.nextInt(1,16);
-        System.out.printf("%d,%d", x, y);
-//        while (!(this.gameArea.getCellBounds(x,y).isEmpty())){
-//            x = this.rnd.nextInt(0,16);
-//            y = this.rnd.nextInt(0,16);
-//        }
+
+        //checks if the randomly generated position is occupied
+        //If it is, then I will check generating a position till it finds one that is not occupied
+        while (this.positions[y][x] == 1){
+            x = this.rnd.nextInt(1,16);
+            y = this.rnd.nextInt(1,16);
+        }
+
+        //adds the hydra head onto the game area at the randomly generated position
         this.gameArea.add(head, x,y);
+
+        //Indicates that the position at y,x (row number and column number) is occupied
+        this.positions[y][x] = 1;
+
+        /**
+         * This adds a function to the hydra head that will activate
+         * when it is clicked
+         */
         this.hydraIcon.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Node mouseClick = mouseEvent.getPickResult().getIntersectedNode();
-                clickHead(mouseClick);
+                clickHead(mouseClick, headType);
             }
         });
     }
 
-    public void clickHead(Node mouseClick){
+    public void clickHead(Node mouseClick, int headType){
         int row = GridPane.getRowIndex(mouseClick);
         int col = GridPane.getColumnIndex(mouseClick);
-
-        System.out.printf("\n%d %d\n", row,col);
-
-        
+        this.gameArea.getChildren().remove(mouseClick);
+        this.positions[row][col] = 0;
+        this.score += 1;
     }
 
     public void setHead(int headType){
